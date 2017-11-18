@@ -19,7 +19,7 @@ under the License.
 package org.apache.plc4x.scala.api
 
 import org.apache.plc4x.java.authentication.PlcAuthentication
-import org.apache.plc4x.java.connection.PlcConnection
+import org.apache.plc4x.scala.api.connection.PlcConnection
 
 /**
   * General interface defining the minimal methods required for adding a new type of driver to the PLC4J system.
