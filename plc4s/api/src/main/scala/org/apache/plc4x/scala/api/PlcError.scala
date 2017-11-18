@@ -16,10 +16,8 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 */
-package org.apache.plc4x.scala
+package org.apache.plc4x.scala.api
 
-class Test {
-    def main(args: Array[String]): Unit = {
-        println("Hello World!")
-    }
-}
+sealed trait PlcError
+
+final case class PlcConnectionError(reason: String)

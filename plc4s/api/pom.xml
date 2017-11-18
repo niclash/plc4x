@@ -24,48 +24,35 @@
 
   <parent>
     <groupId>org.apache.plx4x</groupId>
-    <artifactId>plc4x-parent</artifactId>
+    <artifactId>plc4s</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>plc4s</artifactId>
+  <artifactId>plc4s-api</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>pom</packaging>
 
-  <name>PLC4S</name>
-  <description>Implementation of the protocol adapters for usage as Scala library.</description>
-
-  <modules>
-    <module>api</module>
-  </modules>
+  <name>PLC4S: API</name>
+  <description>Central Module for the Scala API.</description>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>net.alchim31.maven</groupId>
-          <artifactId>scala-maven-plugin</artifactId>
-          <version>3.3.1</version>
-          <configuration>
-            <scalaVersion>2.12.4</scalaVersion>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+    <sourceDirectory>src/main/scala</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
   </build>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.apache.plx4x</groupId>
-        <artifactId>plc4j-api</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.plx4x</groupId>
-        <artifactId>plc4j-core</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.plx4x</groupId>
+      <artifactId>plc4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.plx4x</groupId>
+      <artifactId>plc4j-core</artifactId>
+    </dependency>
+  </dependencies>
+
 </project>
