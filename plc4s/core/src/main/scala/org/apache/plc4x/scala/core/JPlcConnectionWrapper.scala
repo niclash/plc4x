@@ -19,21 +19,20 @@ under the License.
 package org.apache.plc4x.scala.core
 
 import org.apache.plc4x.java.connection.{PlcConnection => JPlcConnection}
+import org.apache.plc4x.scala.api.PlcConnectionError
 import org.apache.plc4x.scala.api.connection.PlcConnection
 
-private[core] class JPlcConnectionWrapper(val jPlcConnection: JPlcConnection) extends PlcConnection  {
-    /**
-      * Establishes the connection to the remote PLC.
-      *
-      * @return Either nothing in case the connection could be established or an PlcError.
-      */
-    override def connect() = ???
+import scala.util.{Failure, Success, Try}
 
-    /**
-      * Parses a PLC/protocol dependent address string into an Address object.
-      *
-      * @param addressString String representation of an address for the current type of PLC/protocol.
-      * @return Either the Address object identifying an address for the current type of PLC/protocol or a PlcError.
-      */
-    override def parseAddress(addressString: String) = ???
+private[core] class JPlcConnectionWrapper(val jPlcConnection: JPlcConnection) extends PlcConnection  {
+
+    override def connect() = Try(jPlcConnection.connect()) match {
+        case Success(_) => Right(Unit)
+        case Failure(ex) => Left(PlcConnectionError(ex.getMessage))
+    }
+
+    override def parseAddress(addressString: String) = Try(jPlcConnection.parseAddress(addressString)) match {
+        case Success(address) => Right(address)
+        case Failure(ex) => Left(PlcConnectionError(ex.getMessage))
+    }
 }

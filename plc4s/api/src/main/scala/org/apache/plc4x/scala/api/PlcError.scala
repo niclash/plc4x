@@ -20,4 +20,4 @@ package org.apache.plc4x.scala.api
 
 sealed trait PlcError
 
-final case class PlcConnectionError(reason: String)
+final case class PlcConnectionError(reason: String) extends PlcError

@@ -21,8 +21,6 @@ package org.apache.plc4x.scala.api.connection
 import org.apache.plc4x.java.messages.Address
 import org.apache.plc4x.scala.api.PlcError
 
-import scala.util.Try
-
 /**
   * Interface defining the most basic methods a PLC4X connection should support.
   * This generally handles the connection establishment itself and the parsing of
