@@ -26,11 +26,11 @@ sealed trait PlcRequest extends PlcMessage {
     def address: Address
 }
 
-final case class SimpleReadRequest[T](address: Address)
+final case class SimpleReadRequest[T](address: Address, size: Int = 1)
 
 sealed trait PlcResponse[T] extends PlcMessage {
     def address: Address
     def value: T
 }
 
-final case class SimpleReadResponse[T](address: Address, value: T)
+final case class SimpleReadResponse[T](address: Address, value: T, size: Int)

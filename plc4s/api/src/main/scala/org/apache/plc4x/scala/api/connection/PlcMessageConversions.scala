@@ -18,28 +18,19 @@ under the License.
 */
 package org.apache.plc4x.scala.api.connection
 
-import org.apache.plc4x.java.connection.{PlcReader => JPlcReader}
-import org.apache.plc4x.scala.api.connection.PlcMessageConversions._
+import org.apache.plc4x.java.messages.{PlcSimpleReadRequest, PlcSimpleReadResponse}
+import org.apache.plc4x.java.types.Value
 import org.apache.plc4x.scala.api.messages.{SimpleReadRequest, SimpleReadResponse}
 
-import scala.compat.java8.FutureConverters._
-import scala.concurrent.{ExecutionContext, Future}
+private[connection] object PlcMessageConversions {
 
-/**
-  * Interface implemented by all PlcConnections that are able to read from remote resources.
-  */
-trait PlcReader {
+    implicit class SimpleRequestOps[T](req: SimpleReadRequest[T]) {
 
-    def reader: JPlcReader
+        def toJava: PlcSimpleReadRequest[Value[T]] = new PlcSimpleReadRequest[Value[T]](classOf[Value[T]], req.address, req.size)
+    }
 
-    /**
-      * Reads a requested value from a PLC.
-      *
-      * @param readRequest object describing the type and location of the value.
-      * @tparam T The value type that should be used.
-      * @return a [[Future]] giving async access to the returned value.
-      */
-    def read[T](readRequest: SimpleReadRequest[T])(implicit ec: ExecutionContext): Future[SimpleReadResponse[T]] =
-        reader.read(readRequest.toJava).toScala.map { _.toScala }
+    implicit class PlcSimpleReadResponseOps[T](resp: PlcSimpleReadResponse[Value[T]]) {
 
+        def toScala: SimpleReadResponse[T] = SimpleReadResponse(resp.getAddress, resp.getValue.getValue, resp.getSize)
+    }
 }
