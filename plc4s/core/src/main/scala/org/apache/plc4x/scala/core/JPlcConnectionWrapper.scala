@@ -24,7 +24,7 @@ import org.apache.plc4x.scala.api.connection.PlcConnection
 
 import scala.util.{Failure, Success, Try}
 
-private[core] class JPlcConnectionWrapper(val jPlcConnection: JPlcConnection) extends PlcConnection  {
+private[core] class JPlcConnectionWrapper(val jPlcConnection: JPlcConnection) extends PlcConnection {
 
     override def connect() = Try(jPlcConnection.connect()) match {
         case Success(_) => Right(Unit)
