@@ -81,12 +81,12 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.apache.plx4x</groupId>
+        <groupId>org.apache.plc4x</groupId>
         <artifactId>plc4j-api</artifactId>
         <version>0.0.1-SNAPSHOT</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.plx4x</groupId>
+        <groupId>org.apache.plc4x</groupId>
         <artifactId>plc4j-core</artifactId>
         <version>0.0.1-SNAPSHOT</version>
       </dependency>
