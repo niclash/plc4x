@@ -14,53 +14,56 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-
-= S7
 :imagesdir: ../../img/
 
-== Overview of the Protocols
+== S7
+
+=== Overview of the Protocols
 
 [ditaa,protocols-s7-osi]
 ....
-                    :                                  |                                                 :
-                    :                                  |                                                 :
-                    :                           :      V      :             : Profinet RT : Profinet IRT:
-- - - - - - - - - - +-------------+-------------+-------------+-------------+-------------+-------------+ - -
-                    |c0B0         |c0B0         |c0B0         |c0B0         |c0B0         |c0B0         |
+                    :                                                       : implemented               :
+                    :                                                       :      |                    :
+                    :                       Profinet                        :      | S7 Protocol        :
+                    :                                                       :      V                    :
+- - - - - - - - - - +-------------+-------------+-------------+-------------+-------------+-------------+
+                    |c0B0         |c0B0         |c0B0         |c0B0         |c0BA         |c0BA         |
  Application        |             |             |             |             |             |             |
  Layer              |             |             |             |             |             |             |
                     |             |             |             |             |             |             |
-                    |             |             |             |             |             |             |
-- - - - - - - - - - |             |             |             |             |             |             | - -
+                    | Profinet IO | Profinet IO | Profinet CBA| Profinet CBA|             |             |
+- - - - - - - - - - |   RT / IRT  |             |             |      RT     |             |             | - -
                     |             |             |             |             |             |             |
  Presentation       |             |             |             |             |             |             |
- Layer              |             |             |     S7      |             |             |             |
-                    |             |             |Communication|             |  Profinet   |  Profinet   |
+ Layer              |             |             |             |             |     S7      |     S7      |
+                    |             |             |             |             |Communication|Communication|
                     |             |             |             |             |             |             |
-- - - - - - - - - - |             |             |             |             |             |             | - -
-                    |             |             |             |             |             |             |
+- - - - - - - - - - |             +-------------+-------------+             |             |             | - -
+                    |             |cAAA         |cAAA         |             |             |             |
  Session            |             |             |             |             |             |             |
- Layer              |             |             |             |             |             |             |
+ Layer              |             |     RPC     |    DCOM     |             |             |             |
                     |             |             |             |             |             |             |
                     |             |             |             |             |             |             |
-- - - - - - - - - - +-------------+-------------+-------------+-------------+-------------+-------------+ - -
-                    |cAAA         |cAAA         |cF6F                       |c0AF         |cA0F         |
-                    |             |             |  ISO Transport Protocol   |             |             |
-                    |             |             |          RFC 905          |             |             |
-                    |             |             | (Class 0)                 |             |             |
-                    |             |             +-------------+             |             |             |
-                    |             |             |cFF6         |             |             |             |
- Transport          |             |             | ISO on TCP  |             |             |             |
- Layer              |     UDP     |     TCP     |  RFC 1006   |             |             |             |
-                    |             |             +-------------+             |             |             |
-                    |             |                           |     ISO     |             |             |
-- - - - - - - - - - +-------------+---------------------------+   Transport |             |             | - -
-                    |cAAA                                     |   Protocol  |             |             |
- Network            |                                         |   RFC 905   |             |             |
- Layer              |                    IP                   |   (Class 4) |             |             |
-                    |                                         |             |             |             |
-                    |                                         |             |             |             |
-- - - - - - - - - - +-----------------------------------------+-------------+-------------+-------------+ - -
+- - - - - - - - - - |             +-------------+-------------+             +-------------+-------------+ - -
+                    |             |cAAA         |cAAA         |             |cF6F                       |
+                    |             |             |             |             |  ISO Transport Protocol   |
+                    |             |             |             |             |          RFC 905          |
+                    |             |             |             |             | (Class 0)                 |
+                    |             |             |             |             +-------------+             |
+                    |             |             |             |             |cFF6         |             |
+ Transport          |             |             |             |             | ISO on TCP  |             |
+ Layer              |             |     UDP     |     TCP     |             |  RFC 1006   |             |
+                    |             |             |             |             +-------------+             |
+                    |             |             |             |             |cAAA         |             |
+                    |             |             |             |             |     TCP     |             |
+                    |             |             |             |             |             |     ISO     |
+- - - - - - - - - - |             +-------------+-------------+             +-------------+   Transport | - -
+                    |             | cAAA                      |             |cAAA         |   Protocol  |
+ Network            |             |                           |             |             |   RFC 905   |
+ Layer              |             |            IP             |             |     IP      |   (Class 4) |
+                    |             |                           |             |             |             |
+                    |             |                           |             |             |             |
+- - - - - - - - - - +-------------+---------------------------+-------------+-------------+-------------+ - -
                     |cAAA                                                                               |
  Data Link          |                                                                                   |
  Layer              |                                                                                   |
@@ -75,7 +78,7 @@
 - - - - - - - - - - +-----------------------------------------------------------------------------------+ - -
 ....
 
-== Protocol Descriptions
+=== Protocol Descriptions
 
 |===
 |Name |ISO |RFC |Link
@@ -83,6 +86,8 @@
 |ISO Transport Protocol (Class 4) |ISO DP 8073 | RFC 905 |https://tools.ietf.org/html/rfc905
 |ISO on TCP |- | RFC 1006| https://tools.ietf.org/html/rfc1006
 |S7 Protocol |- |- |http://gmiru.com/article/s7comm/ http://gmiru.com/article/s7comm-part2/
+|RPC |- | RFC 1057 & RFC 5531 |https://tools.ietf.org/html/rfc1057 https://tools.ietf.org/html/rfc5531
+|DCOM |- |- | https://msdn.microsoft.com/library/cc201989.aspx
 |===
 
 While a lot of information was available on the general structure of S7 communication, only little information was available on the constant values this protocol uses.
@@ -95,7 +100,7 @@ As soon as a valid value was found the tool then output the detected constant va
 
 The tool for generating this is located in the `plc4j/protocols/s7-utils` project.
 
-== Interaction with an S7 PLC
+=== Interaction with an S7 PLC
 
 [seqdiag,s7-interaction]
 ....
@@ -134,7 +139,7 @@ The tool for generating this is located in the `plc4j/protocols/s7-utils` projec
 }
 ....
 
-=== Structure of a Connection Request
+==== Structure of a Connection Request
 
 // len (length of bits - use instead of explicit byte count - requires "*" as first element)
 // label
@@ -192,11 +197,11 @@ Legend:
 - [protocolId]#Part of the packet that identifies the type of request#
 - [protocolParameter]#Variable Parts of the ISO Transport Protocol Packet Header#
 
-=== Structure of a Connection Response
+==== Structure of a Connection Response
 
 The `Connection Response` is identical to the `Connection Request` with the only difference that the `TPDU-Code` has a code of `0xD0`.
 
-=== Structure of a Setup Communication Request
+==== Structure of a Setup Communication Request
 
 [packetdiag,s7-setup-communication-request,svg]
 ....
@@ -244,7 +249,7 @@ Legend:
 - [protocolId]#Part of the packet that identifies the type of request#
 - [protocolParameter]#Variable Parts of the ISO Transport Protocol Packet Header#
 
-=== Structure of a Setup Communication Response
+==== Structure of a Setup Communication Response
 
 The `Setup Communication Response` is identical to the `Setup Communication Request` with the only difference that the `Message Type` has an ACK_DATA code of `0x03`.
 
@@ -254,13 +259,11 @@ The values might be lower than in the request, but never higher.
 
 TIP: One thing about `Setup Communication Responses` which is kind of strange, is that usually S7 response messages have additional `error class` and `error code` fields, which this type of response doesn't seem to have.
 
-== Links
+=== Links
+
+Providing some additional information without directly being used:
 
 - High Level description: http://snap7.sourceforge.net/siemens_comm.html
-- Wireshark Documentation: https://wiki.wireshark.org/S7comm
-- Some more reverse engineered documentation on the protocol: https://media.defcon.org/DEF%20CON%2025/DEF%20CON%2025%20presentations/Cheng%20Lei/DEFCON-25-Cheng-Lei-The-Spear-to-Break-the-Security-Wall-of-S7CommPlus-WP.pdf
 - https://support.industry.siemens.com/cs/document/26483647/welche-eigenschaften-vorteile-und-besonderheiten-bietet-das-s7-protokoll-?dti=0&lc=de-WW
-- Protocol Diagram: https://cache.industry.siemens.com/dl/files/647/26483647/img_44602/v1/net_s7_protokoll_01.gif
 - Interesting presentation mentioning a new protocol flavor 0x72 instead of the old 0x32: https://www.research.ibm.com/haifa/Workshops/security2014/present/Avishai_Wool_AccurateModelingoftheSiemensS7SCADAProtocol-v5.pdf
-- 0x72 Protocol decoded: https://sourceforge.net/p/s7commwireshark/code/HEAD/tree/trunk/src/s7comm_plus/packet-s7comm_plus.c
-- Open Source PHP Project: http://epics.web.psi.ch/software/s7plc/
+- Open Source SCADA System: https://www.eclipse.org/eclipsescada/

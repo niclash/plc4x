@@ -28,19 +28,22 @@
     <version>18</version>
   </parent>
 
-  <groupId>org.apache.plx4x</groupId>
+  <groupId>org.apache.plc4x</groupId>
   <artifactId>plc4x-parent</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>PLC4X</name>
-  <description>PLC4X is an effort to create a universal library for accessing industrial programmable logic controllers using a variety of protocols using a uniform API.</description>
+  <description>
+    PLC4X is an effort to create a universal library for accessing industrial programmable logic controllers
+    using a variety of protocols using a uniform API.
+  </description>
   <url>https://plc4x.apache.org</url>
   <inceptionYear>2017</inceptionYear>
 
   <scm>
-    <connection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-plc4x.git</connection>
-    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-plc4x.git</developerConnection>
+    <connection>scm:git:https://gitbox.apache.org/repos/asf/incubator-plc4x.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/incubator-plc4x.git</developerConnection>
     <url>https://github.com/apache/incubator-plc4x</url>
     <tag>HEAD</tag>
   </scm>
@@ -49,7 +52,7 @@
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-plc4x.git</url>
+      <url>scm:git:https://gitbox.apache.org/repos/asf/incubator-plc4x.git</url>
     </site>
   </distributionManagement>
 
@@ -152,6 +155,9 @@
 
             <!-- Asciidoctor generated files -->
             <exclude>**/.asciidoctor/**</exclude>
+
+            <!-- Jenkins build related files -->
+            <exclude>.repository/**</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -211,9 +217,10 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <!--
-                Notice the @ instead of the $ as prefix? That's late evaluation.
+            We have to slightly increase the heap-size or some tests will fail.
+            Notice the @ instead of the $ as prefix? That's late evaluation.
           -->
-          <argLine>@{surefireArgLine}</argLine>
+          <argLine>-Xmx256m @{surefireArgLine}</argLine>
         </configuration>
         <dependencies>
           <dependency>
@@ -322,7 +329,10 @@
           </execution>
         </executions>
       </plugin>
-      <!-- Replace the bootstrap css with the version of the theme -->
+
+      <!--
+        Replace the bootstrap css with the version of the theme
+      -->
       <plugin>
         <groupId>com.googlecode.maven-download-plugin</groupId>
         <artifactId>download-maven-plugin</artifactId>
@@ -354,6 +364,7 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -389,6 +400,71 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <!--
+        When running asciidoctor as part of the site-generation there were great problems with
+        the configuration of the diagram generation. Unfortunatel when generating all content here,
+        the output will not have the site style. That's why here we generate the images to the
+        site directory and have the output written to an outside directory, so it will not interfere.
+      -->
+      <plugin>
+        <groupId>org.asciidoctor</groupId>
+        <artifactId>asciidoctor-maven-plugin</artifactId>
+        <version>1.5.6</version>
+        <executions>
+          <execution>
+            <id>generate-asciidoc</id>
+            <phase>site</phase>
+            <goals>
+              <goal>process-asciidoc</goal>
+            </goals>
+            <configuration>
+              <sourceDirectory>src/site/asciidoc</sourceDirectory>
+              <outputDirectory>${project.build.directory}/dump</outputDirectory>
+              <attributes>
+                <source-highlighter>prettify</source-highlighter>
+                <!-- Tells asciidoctor where to put the generated files -->
+                <imagesoutdir>${project.build.directory}/site/img</imagesoutdir>
+              </attributes>
+              <requires>
+                <require>asciidoctor-diagram</require>
+              </requires>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.jruby</groupId>
+            <artifactId>jruby-complete</artifactId>
+            <version>9.1.13.0</version>
+          </dependency>
+          <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj</artifactId>
+            <version>1.5.6</version>
+          </dependency>
+          <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj-diagram</artifactId>
+            <version>1.5.4.1</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+      <!--
+        Make the maven-site-plugin stage the output in the "asf-site" branch
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-scm-publish-plugin</artifactId>
+        <version>1.1</version>
+        <configuration>
+          <!-- mono-module doesn't require site:stage -->
+          <content>${project.build.directory}/staging</content>
+          <!-- branch where to deploy -->
+          <scmBranch>asf-site</scmBranch>
+        </configuration>
       </plugin>
     </plugins>
 
@@ -543,8 +619,14 @@
             <asciidoc>
               <attributes>
                 <source-highlighter>prettify</source-highlighter>
-                <!-- Tells asciidoctor where to put the generated files -->
-                <imagesoutdir>${project.build.directory}/site/img</imagesoutdir>
+                <!--
+                  When running asciidoctor as part of the site-generation, it will generate the diagrams of
+                  sub-modules into the root modules img directory, which will break everything. Therefore we
+                  tell it to generate to some outside directory and have a second execution of asciidoctor
+                  generate the images to the correct location. This is a hack that should be removed as soon
+                  as possible.
+                -->
+                <imagesoutdir>${project.build.directory}/dump</imagesoutdir>
               </attributes>
               <requires>
                 <require>asciidoctor-diagram</require>
@@ -701,5 +783,32 @@
       </plugin>
     </plugins>
   </reporting>
+
+  <profiles>
+    <profile>
+      <id>debug-pom</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-help-plugin</artifactId>
+            <version>2.2</version>
+            <executions>
+              <execution>
+                <id>generate-effective-pom</id>
+                <phase>pre-site</phase>
+                <goals>
+                  <goal>effective-pom</goal>
+                </goals>
+                <configuration>
+                  <output>${project.build.directory}/effective.pom</output>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

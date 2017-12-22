@@ -18,12 +18,13 @@ under the License.
 */
 package org.apache.plc4x.java.mock;
 
-import org.apache.plc4x.java.authentication.PlcAuthentication;
-import org.apache.plc4x.java.connection.PlcConnection;
-import org.apache.plc4x.java.exceptions.PlcException;
-import org.apache.plc4x.java.messages.Address;
+import org.apache.plc4x.java.api.authentication.PlcAuthentication;
+import org.apache.plc4x.java.api.connection.AbstractPlcConnection;
+import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
+import org.apache.plc4x.java.api.exceptions.PlcException;
+import org.apache.plc4x.java.api.model.Address;
 
-public class MockConnection implements PlcConnection {
+public class MockConnection extends AbstractPlcConnection {
 
     private final PlcAuthentication authentication;
 
@@ -36,7 +37,12 @@ public class MockConnection implements PlcConnection {
     }
 
     @Override
-    public void connect() throws PlcException {
+    public void connect() throws PlcConnectionException {
+
+    }
+
+    @Override
+    public void close() throws Exception {
 
     }
 
