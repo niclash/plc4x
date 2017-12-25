@@ -23,20 +23,54 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.plx4x</groupId>
+    <groupId>org.apache.plc4x</groupId>
     <artifactId>integrations</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>apache-edgent</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>pom</packaging>
 
-  <name>Integrations: Apache Edgnet</name>
+  <name>Integrations: Apache Edgent</name>
   <description>Integration module for integrating PLC4X into Apache Edgent.</description>
 
-  <modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.plc4x</groupId>
+      <artifactId>plc4j-api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <!-- need plc4j-core if we need to use PlcDriverManager -->
+    <dependency>
+      <groupId>org.apache.plc4x</groupId>
+      <artifactId>plc4j-core</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.edgent</groupId>
+      <artifactId>edgent-api-topology</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.12</version>
+      <scope>provided</scope>
+    </dependency>
     
-  </modules>
+    <!--  test -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.2.3</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>

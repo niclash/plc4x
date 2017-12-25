@@ -15,8 +15,15 @@
 //  limitations under the License.
 //
 
-= Protocols
+== Protocols
 
 - link:modbus/index.html[Modbus]
 - link:opc-ua/index.html[OPC-UA]
 - link:s7/index.html[S7]
+
+=== Links
+
+Apache 2.0 licensed JNI library for accessing raw IPv4 and IPv6 sockets. Might be the ideal starting point for implementing protocols below TCP & UDP.
+https://www.savarese.org/software/rocksaw/
+
+
