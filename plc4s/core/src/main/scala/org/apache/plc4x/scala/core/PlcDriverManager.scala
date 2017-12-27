@@ -19,11 +19,9 @@ under the License.
 package org.apache.plc4x.scala.core
 
 import org.apache.plc4x.java.{PlcDriverManager => JPlcDriverManager}
-import org.apache.plc4x.scala.api.PlcDriver
 import org.apache.plc4x.scala.api.PlcConnectionError
 
 import scala.util.{Failure, Success, Try}
-import scala.util.control.Exception._
 
 class PlcDriverManager private(val jPlcDriverManager: JPlcDriverManager){
 
@@ -31,9 +29,9 @@ class PlcDriverManager private(val jPlcDriverManager: JPlcDriverManager){
 
     def this() = this(Thread.currentThread.getContextClassLoader)
 
-    def getDriver(url: String): Either[PlcConnectionError, PlcDriver] = {
-        Try(jPlcDriverManager.getDriver(url)) match {
-            case Success(jDriver) => Right(new JPlcDriverWrapper(jDriver))
+    def getConnection(url: String): Either[PlcConnectionError, JPlcConnectionWrapper] = {
+        Try(jPlcDriverManager.getConnection(url)) match {
+            case Success(jConnection) => Right(new JPlcConnectionWrapper(jConnection))
             case Failure(ex) => Left(PlcConnectionError(ex.getMessage))
         }
     }
