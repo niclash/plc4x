@@ -18,7 +18,7 @@ under the License.
 */
 package org.apache.plc4x.scala.api
 
-import org.apache.plc4x.java.authentication.PlcAuthentication
+import org.apache.plc4x.java.api.authentication.PlcAuthentication
 import org.apache.plc4x.scala.api.connection.PlcConnection
 
 /**

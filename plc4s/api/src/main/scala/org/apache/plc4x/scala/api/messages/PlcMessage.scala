@@ -18,7 +18,7 @@ under the License.
 */
 package org.apache.plc4x.scala.api.messages
 
-import org.apache.plc4x.java.messages.Address
+import org.apache.plc4x.java.api.model.Address
 
 sealed trait PlcMessage
 

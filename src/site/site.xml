@@ -64,8 +64,8 @@
 
   <bannerLeft>
       <name>Apache PLC4X (incubating)</name>
-      <src>https://iot.gitlab.codecentric.de/plc4x/img/apache_plc4x_logo.png</src>
-      <href>https://iot.gitlab.codecentric.de/plc4x/</href>
+      <src>https://plc4x.apache.org/img/apache_plc4x_logo.png</src>
+      <href>https://plc4x.apache.org/</href>
   </bannerLeft>
 
   <bannerRight>
@@ -81,14 +81,14 @@
 
     <menu ref="reports" inherit="top"/>
     <menu ref="parent" inherit="top"/>
-    <menu name="Project">
-      <item name="Incubation-Proposal" href="incubation-proposal.html"/>
+    <menu name="Development">
+      <item name="Website" href="development/website.html"/>
     </menu>
     <menu name="Infrastructure">
       <item name="Wiki" href="https://cwiki.apache.org/confluence/display/PLC4X"/>
       <item name="Issues" href="https://issues.apache.org/jira/projects/PLC4X"/>
       <item name="CI" href="https://builds.apache.org/view/P/view/PLC4X/"/>
-      <item name="SonarQube" href="https://builds.apache.org/analysis/PLC4X/"/>
+      <item name="SonarQube" href="https://builds.apache.org/analysis/overview?id=55410"/>
     </menu>
     <menu name="Protocols">
       <item name="Features" href="protocols/features.html"/>
