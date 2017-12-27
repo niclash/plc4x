@@ -20,7 +20,7 @@ package org.apache.plc4x.scala.api.connection
 
 import org.apache.plc4x.java.api.connection.{PlcReader => JPlcReader}
 import org.apache.plc4x.scala.api.connection.PlcMessageConversions._
-import org.apache.plc4x.scala.api.messages.{SimpleReadRequest, SimpleReadResponse}
+import org.apache.plc4x.scala.api.messages.{PlcReadRequest, PlcReadResponse}
 
 import scala.compat.java8.FutureConverters._
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,7 +39,7 @@ trait PlcReader {
       * @tparam T The value type that should be used.
       * @return a [[Future]] giving async access to the returned value.
       */
-    def read[T](readRequest: SimpleReadRequest[T])(implicit ec: ExecutionContext): Future[SimpleReadResponse[T]] =
+    def read[T](readRequest: PlcReadRequest)(implicit ec: ExecutionContext): Future[PlcReadResponse] =
         reader.read(readRequest.toJava).toScala.map { _.toScala }
 
 }

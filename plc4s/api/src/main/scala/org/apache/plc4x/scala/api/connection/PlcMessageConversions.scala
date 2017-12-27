@@ -18,19 +18,50 @@ under the License.
 */
 package org.apache.plc4x.scala.api.connection
 
-import org.apache.plc4x.java.messages.{PlcSimpleReadRequest, PlcSimpleReadResponse}
-import org.apache.plc4x.java.types.Value
-import org.apache.plc4x.scala.api.messages.{SimpleReadRequest, SimpleReadResponse}
+import scala.collection.JavaConverters._
+import org.apache.plc4x.java.api.messages.{PlcReadRequest => jPlcReadRequest, PlcReadResponse => jPlcReadResponse}
+import org.apache.plc4x.java.api.messages.items.{ReadRequestItem => jReadRequestItem, ReadResponseItem => jReadResponseItem}
+import org.apache.plc4x.java.api.types.ResponseCode
+import org.apache.plc4x.scala.api.messages.items.{ReadRequestItem, ReadResponseItem}
+import org.apache.plc4x.scala.api.messages.{PlcReadRequest, PlcReadResponse}
 
 private[connection] object PlcMessageConversions {
 
-    implicit class SimpleRequestOps[T](req: SimpleReadRequest[T]) {
+    implicit class requestItemOps(item: ReadRequestItem){
 
-        def toJava: PlcSimpleReadRequest[Value[T]] = new PlcSimpleReadRequest[Value[T]](classOf[Value[T]], req.address, req.size)
+        def toJava: jReadRequestItem = new jReadRequestItem(item.datatype, item.address, item.size)
     }
 
-    implicit class PlcSimpleReadResponseOps[T](resp: PlcSimpleReadResponse[Value[T]]) {
+    implicit class jRequestItemOps(item: jReadRequestItem){
 
-        def toScala: SimpleReadResponse[T] = SimpleReadResponse(resp.getAddress, resp.getValue.getValue, resp.getSize)
+        def toScala: ReadRequestItem = new ReadRequestItem(item.getDatatype(), item.getAddress(), item.getSize())
+    }
+
+    implicit class RequestOps(req: PlcReadRequest) {
+
+        def toJava: jPlcReadRequest = new jPlcReadRequest(req.readRequestItems.map(e => e.toJava).asJava)
+    }
+
+    implicit class jRequestOps(req: jPlcReadRequest) {
+
+        def toScala: PlcReadRequest = PlcReadRequest(req.getReadRequestItems().asScala.map(e => e.toScala).toList)
+    }
+
+    implicit class jResponseItemOps(item: jReadResponseItem){
+
+        def toScala: ReadResponseItem =
+            ReadResponseItem(item.getRequestItem().toScala, item.getResponseCode(), item.getValues().asScala.toList)
+    }
+
+    implicit class responseItemOps(item: ReadResponseItem){
+
+        def toJava: jReadResponseItem =
+           new jReadResponseItem(item.readRequestItem.toJava, item.responseCode, item.values.asJava)
+    }
+
+    implicit class ResponseOps(resp: jPlcReadResponse) {
+
+        def toScala: PlcReadResponse =
+            PlcReadResponse(resp.getRequest().toScala, resp.getResponseItems().asScala.map(e => e.toScala).toList)
     }
 }

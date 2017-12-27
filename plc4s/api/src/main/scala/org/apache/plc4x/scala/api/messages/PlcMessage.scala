@@ -19,18 +19,29 @@ under the License.
 package org.apache.plc4x.scala.api.messages
 
 import org.apache.plc4x.java.api.model.Address
+import items.{ReadRequestItem, ReadResponseItem}
+
+import scala.collection.immutable.List
 
 sealed trait PlcMessage
 
-sealed trait PlcRequest extends PlcMessage {
-    def address: Address
+sealed trait PlcRequest extends PlcMessage
+
+final case class PlcReadRequest(readRequestItems: List[ReadRequestItem]){
+    def addItem(item: ReadRequestItem) = PlcReadRequest(item::readRequestItems)
+    def getNumItems = readRequestItems.size
+}
+object PlcReadRequest{
+    def apply(): PlcReadRequest =
+        PlcReadRequest(List[ReadRequestItem]())
+    def apply(readRequestItems: List[ReadRequestItem]): PlcReadRequest =
+        PlcReadRequest(readRequestItems)
+    def apply(datatype: Class[_], address: Address, size: Int = 1): PlcReadRequest =
+        PlcReadRequest(List(ReadRequestItem(datatype, address, size)))
 }
 
-final case class SimpleReadRequest[T](address: Address, size: Int = 1)
+sealed trait PlcResponse extends PlcMessage
 
-sealed trait PlcResponse[T] extends PlcMessage {
-    def address: Address
-    def value: T
-}
+final case class PlcReadResponse(readRequest: PlcReadRequest, responseItems: List[ReadResponseItem])
 
-final case class SimpleReadResponse[T](address: Address, value: T, size: Int)
+
