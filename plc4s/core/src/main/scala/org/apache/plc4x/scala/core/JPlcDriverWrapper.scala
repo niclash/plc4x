@@ -18,8 +18,8 @@ under the License.
 */
 package org.apache.plc4x.scala.core
 
-import org.apache.plc4x.java.authentication.PlcAuthentication
-import org.apache.plc4x.java.{PlcDriver => JPlcDriver}
+import org.apache.plc4x.java.api.authentication.PlcAuthentication
+import org.apache.plc4x.java.api.{PlcDriver => JPlcDriver}
 import org.apache.plc4x.scala.api.{PlcConnectionError, PlcDriver}
 
 import scala.util.{Failure, Success, Try}

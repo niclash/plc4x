@@ -18,7 +18,7 @@ under the License.
 */
 package org.apache.plc4x.scala.api.connection
 
-import org.apache.plc4x.java.connection.{PlcReader => JPlcReader}
+import org.apache.plc4x.java.api.connection.{PlcReader => JPlcReader}
 import org.apache.plc4x.scala.api.connection.PlcMessageConversions._
 import org.apache.plc4x.scala.api.messages.{SimpleReadRequest, SimpleReadResponse}
 

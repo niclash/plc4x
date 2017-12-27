@@ -18,7 +18,7 @@ under the License.
 */
 package org.apache.plc4x.scala.core
 
-import org.apache.plc4x.java.connection.{PlcConnection => JPlcConnection}
+import org.apache.plc4x.java.api.connection.{PlcConnection => JPlcConnection}
 import org.apache.plc4x.scala.api.PlcConnectionError
 import org.apache.plc4x.scala.api.connection.PlcConnection
 
