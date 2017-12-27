@@ -21,7 +21,6 @@ package org.apache.plc4x.scala.api.connection
 import scala.collection.JavaConverters._
 import org.apache.plc4x.java.api.messages.{PlcReadRequest => jPlcReadRequest, PlcReadResponse => jPlcReadResponse}
 import org.apache.plc4x.java.api.messages.items.{ReadRequestItem => jReadRequestItem, ReadResponseItem => jReadResponseItem}
-import org.apache.plc4x.java.api.types.ResponseCode
 import org.apache.plc4x.scala.api.messages.items.{ReadRequestItem, ReadResponseItem}
 import org.apache.plc4x.scala.api.messages.{PlcReadRequest, PlcReadResponse}
 
