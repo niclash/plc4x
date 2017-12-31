@@ -16,26 +16,36 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 */
-package org.apache.plc4x.java.isotp.netty.model.params;
+package org.apache.plc4x.java.api.messages.mock;
 
-import org.apache.plc4x.java.isotp.netty.model.types.ParameterCode;
-import org.apache.plc4x.java.isotp.netty.model.types.TpduSize;
+import org.apache.plc4x.java.api.model.Address;
 
-public class TpduSizeParameter implements Parameter {
+public class MockAddress implements Address {
+  private final String address;
+  
+  public MockAddress(String address) {
+    this.address = address;
+  }
+  
+  public String getAddress() {
+    return address;
+  }
+  
+  @Override
+  public String toString() {
+    return "mock address: "+address;
+  }
+  
+  @Override
+  public boolean equals(Object o) {
+    return o != null
+        && o instanceof MockAddress
+        && ((MockAddress)o).address.equals(this.address);
+  }
 
-    private final TpduSize tpduSize;
-
-    public TpduSizeParameter(TpduSize tpduSize) {
-        this.tpduSize = tpduSize;
-    }
-
-    @Override
-    public ParameterCode getType() {
-        return ParameterCode.TPDU_SIZE;
-    }
-
-    public TpduSize getTpduSize() {
-        return tpduSize;
-    }
+  @Override
+  public int hashCode() {
+    return address.hashCode();
+  }
 
 }

@@ -41,9 +41,9 @@ public class IsoTPProtocol extends MessageToMessageCodec<IsoOnTcpMessage, Tpdu> 
 
     private final static Logger logger = LoggerFactory.getLogger(IsoTPProtocol.class);
 
-    private byte rackNo;
-    private byte slotNo;
-    private TpduSize tpduSize;
+    private final byte rackNo;
+    private final byte slotNo;
+    private final TpduSize tpduSize;
 
     private CalledTsapParameter calledTsapParameter;
     private TpduSizeParameter tpduSizeParameter;
@@ -119,6 +119,7 @@ public class IsoTPProtocol extends MessageToMessageCodec<IsoOnTcpMessage, Tpdu> 
                 buf.writeShort(errorTpdu.getDestinationReference());
                 buf.writeByte(errorTpdu.getRejectCause().getCode());
                 outputParameters(buf, in.getParameters());
+                break;
             }
             default: {
                 logger.error("TDPU Value {} not implemented yet", new Object[]{in.getTpduCode().name()});
@@ -253,6 +254,14 @@ public class IsoTPProtocol extends MessageToMessageCodec<IsoOnTcpMessage, Tpdu> 
         }
     }
 
+    /**
+     * Return the length of the entire header in bytes (including the size field itself)
+     * This is a sum of the fixed size header defined for the given tpdu type and the
+     * lengths of all parameters.
+     *
+     * @param tpdu Tpdu to get the header length for
+     * @return length of the iso tp header
+     */
     private short getHeaderLength(Tpdu tpdu) {
         if (tpdu != null) {
             short headerLength = 0;
@@ -268,7 +277,7 @@ public class IsoTPProtocol extends MessageToMessageCodec<IsoOnTcpMessage, Tpdu> 
                     headerLength = 7;
                     break;
                 case DISCONNECT_CONFIRM:
-                    headerLength = 8;
+                    headerLength = 6;
                     break;
                 case TPDU_ERROR:
                     headerLength = 5;

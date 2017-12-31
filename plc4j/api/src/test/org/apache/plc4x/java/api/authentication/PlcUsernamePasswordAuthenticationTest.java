@@ -16,38 +16,22 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 */
-package org.apache.plc4x.java.isotp.netty.model.types;
+package org.apache.plc4x.java.api.authentication;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-public enum ProtocolClass {
-    CLASS_0((byte) 0x00),
-    CLASS_1((byte) 0x10),
-    CLASS_2((byte) 0x20),
-    CLASS_3((byte) 0x30),
-    CLASS_4((byte) 0x40);
+import static org.junit.jupiter.api.Assertions.*;
 
-    private final byte code;
+class PlcUsernamePasswordAuthenticationTest {
 
-    ProtocolClass(byte code) {
-        this.code = code;
-    }
+    @Test
+    @Tag("fast")
+    void authenication() {
+        PlcUsernamePasswordAuthentication authenication = new PlcUsernamePasswordAuthentication("user", "password");
 
-    public byte getCode() {
-        return code;
-    }
-
-    private static Map<Byte, ProtocolClass> map = null;
-
-    public static ProtocolClass valueOf(byte code) {
-        if (map == null) {
-            map = new HashMap<>();
-            for (ProtocolClass protocolClass : ProtocolClass.values()) {
-                map.put(protocolClass.code, protocolClass);
-            }
-        }
-        return map.get(code);
+        assertTrue(authenication.getUsername().equals("user"), "Unexpected user name");
+        assertTrue(authenication.getPassword().equals("password"), "Unexpected password");
     }
 
 }

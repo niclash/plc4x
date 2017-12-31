@@ -21,14 +21,15 @@ package org.apache.plc4x.java.isotp.netty.model.tpdus;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import org.apache.plc4x.java.isotp.netty.model.params.CallingTsapParameter;
+import org.apache.plc4x.java.isotp.netty.model.params.ChecksumParameter;
 import org.apache.plc4x.java.isotp.netty.model.params.Parameter;
-import org.apache.plc4x.java.isotp.netty.model.types.DisconnectReason;
-import org.apache.plc4x.java.isotp.netty.model.types.ProtocolClass;
-import org.apache.plc4x.java.isotp.netty.model.types.RejectCause;
-import org.apache.plc4x.java.isotp.netty.model.types.TpduCode;
+import org.apache.plc4x.java.isotp.netty.model.params.TpduSizeParameter;
+import org.apache.plc4x.java.isotp.netty.model.types.*;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,9 +58,29 @@ class IsotpModelTests {
 
     @Test
     @Tag("Fast")
-    void dataTpdu() {
+    void errorTpduParameter() {
         short destinationReference = 0x1;
-               List<Parameter> parameters = Collections.emptyList();
+        RejectCause rejectCause = RejectCause.REASON_NOT_SPECIFIED;
+        ArrayList<Parameter> parameters = new ArrayList<>();
+        ByteBuf userData = Unpooled.buffer();
+
+        userData.writeByte(0x7F);
+
+        ErrorTpdu tpdu = new ErrorTpdu(destinationReference, rejectCause, parameters, userData);
+
+        parameters.add(new TpduSizeParameter(TpduSize.SIZE_1024));
+        parameters.add(new ChecksumParameter((byte)0xFF));
+
+        assertTrue(tpdu.getParameters().size() == 2, "Unexpected number of parameters");
+        assertTrue(tpdu.getParameters().containsAll(parameters), "Unexpected parameter");
+        assertTrue(tpdu.getParameter(ChecksumParameter.class) != null, "Checksum parameter should exist");
+        assertTrue(tpdu.getParameter(CallingTsapParameter.class) == null, "CallingTsapParameter parameter should not exist");
+    }
+
+    @Test
+    @Tag("Fast")
+    void dataTpdu() {
+        List<Parameter> parameters = Collections.emptyList();
         ByteBuf userData = Unpooled.buffer();
 
         userData.writeByte(0x66);
@@ -67,7 +88,7 @@ class IsotpModelTests {
         DataTpdu tpdu = new DataTpdu(true, (byte) 0x7F, parameters, userData);
 
         assertTrue(tpdu.getTpduCode() == TpduCode.DATA);
-        assertTrue(tpdu.isEot() == true, "Unexpected eot reference");
+        assertTrue(tpdu.isEot(), "Unexpected eot reference");
         assertTrue(tpdu.getTpduRef() == 0x7F);
         assertTrue(tpdu.getParameters().isEmpty(), "Unexpected parameters");
         assertTrue(tpdu.getUserData().readByte() == (byte) 0x66, "Unexpected user data");

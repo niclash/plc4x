@@ -17,13 +17,13 @@ specific language governing permissions and limitations
 under the License.
 */
 
-package org.apache.plc4x.java.api.messages.items;
+package org.apache.plc4x.java.api.messages;
 
-import org.apache.plc4x.edgent.mock.MockAddress;
-import org.apache.plc4x.java.api.messages.PlcReadRequest;
-import org.apache.plc4x.java.api.messages.PlcReadResponse;
-import org.apache.plc4x.java.api.messages.PlcWriteRequest;
-import org.apache.plc4x.java.api.messages.PlcWriteResponse;
+import org.apache.plc4x.java.api.messages.items.ReadRequestItem;
+import org.apache.plc4x.java.api.messages.items.ReadResponseItem;
+import org.apache.plc4x.java.api.messages.items.WriteRequestItem;
+import org.apache.plc4x.java.api.messages.items.WriteResponseItem;
+import org.apache.plc4x.java.api.messages.mock.MockAddress;
 import org.apache.plc4x.java.api.types.ResponseCode;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class APIMessageTests {
 
@@ -80,7 +80,7 @@ class APIMessageTests {
     @Tag("fast")
     void writeRequestItems() {
         MockAddress address = new MockAddress("mock:/DATA");
-        Byte data[] = { new Byte((byte) 0x23), new Byte((byte) 0x84) };
+        Byte data[] = { (byte) 0x23, (byte) 0x84 };
         WriteRequestItem writeRequestItem = new WriteRequestItem(Byte.class, address, data);
         assertTrue(writeRequestItem.getAddress().equals(address), "Unexpected address");
         assertTrue(writeRequestItem.getDatatype() == Byte.class, "Unexpected data type");
@@ -92,10 +92,10 @@ class APIMessageTests {
     @Tag("fast")
     void writeResponseItem() {
         MockAddress address = new MockAddress("mock:/DATA");
-        WriteRequestItem writeRequestItem = new WriteRequestItem(Byte.class, address, new Byte((byte) 0x3B));
+        WriteRequestItem writeRequestItem = new WriteRequestItem(Byte.class, address, (byte) 0x3B);
         WriteResponseItem writeResponseItem = new  WriteResponseItem(writeRequestItem, ResponseCode.OK);
         assertTrue(writeResponseItem.getResponseCode() ==  ResponseCode.OK, "Unexpected response code");
-        assertTrue((Boolean) writeResponseItem.getRequestItem().equals(writeRequestItem),  "Unexpected response item");
+        assertTrue(writeResponseItem.getRequestItem().equals(writeRequestItem),  "Unexpected response item");
     }
 
     @Test
@@ -158,7 +158,6 @@ class APIMessageTests {
     void plcWriteRequestItem() {
         MockAddress address = new MockAddress("mock:/DATA");
         WriteRequestItem writeRequestItem = new WriteRequestItem(Byte.class, address, (byte) 0x45);
-        PlcWriteRequest plcWriteRequest = new PlcWriteRequest();
 
         assertTrue(writeRequestItem.getAddress().equals(address), "Unexpected address");
         assertTrue(writeRequestItem.getDatatype() == Byte.class, "Unexpected data type");
@@ -177,10 +176,10 @@ class APIMessageTests {
     @Tag("fast")
     void plcWriteRequestObject() {
         MockAddress address = new MockAddress("mock:/DATA");
-        PlcWriteRequest plcWriteRequest = new PlcWriteRequest(Byte.class, address, new Byte((byte) 0x33));
+        PlcWriteRequest plcWriteRequest = new PlcWriteRequest(Byte.class, address, (byte) 0x33);
         assertTrue(plcWriteRequest.getRequestItems().size() == 1, "Expected no request item");
         assertTrue(plcWriteRequest.getNumItems() == 1, "Expected one request item");
-        Object[] values = (Object[])plcWriteRequest.getRequestItems().get(0).getValues();
+        Object[] values = plcWriteRequest.getRequestItems().get(0).getValues();
         assertTrue((byte)values[0] == (byte) 0x33, "Expected value 0x33");
     }
 
@@ -188,7 +187,7 @@ class APIMessageTests {
     @Tag("fast")
     void plcWriteRequestObjects() {
         MockAddress address = new MockAddress("mock:/DATA");
-        Byte[] data = {new Byte((byte)0x22), new Byte((byte)0x66)};
+        Byte[] data = {(byte)0x22, (byte)0x66};
         PlcWriteRequest plcWriteRequest = new PlcWriteRequest(Byte.class, address, data);
         assertTrue(plcWriteRequest.getRequestItems().size() == 1, "Expected one request item");
         assertTrue(plcWriteRequest.getNumItems() == 1, "Expected one request item");
