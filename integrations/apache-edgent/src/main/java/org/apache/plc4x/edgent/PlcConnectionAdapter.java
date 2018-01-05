@@ -60,7 +60,7 @@ import com.google.gson.JsonObject;
  */
 public class PlcConnectionAdapter implements AutoCloseable{
 
-  private final static Logger logger = LoggerFactory.getLogger(PlcConnectionAdapter.class);
+  private static final Logger logger = LoggerFactory.getLogger(PlcConnectionAdapter.class);
   
   private String plcConnectionUrl;
   private PlcConnection plcConnection;
@@ -92,9 +92,8 @@ public class PlcConnectionAdapter implements AutoCloseable{
   @Override
   public void close() throws Exception {
     // only close a connection this instance created/connected
-    if (plcConnectionUrl != null) {
-      if (plcConnection != null)
-        plcConnection.close();
+    if (plcConnectionUrl != null && plcConnection != null) {
+      plcConnection.close();
     }
   }
 
@@ -112,8 +111,7 @@ public class PlcConnectionAdapter implements AutoCloseable{
           address = connection.parseAddress(addressStr);
           PlcReader reader = connection.getReader().get();
           PlcReadRequest readRequest = PlcConnectionAdapter.newPlcReadRequest(datatype, address);
-          T value = (T) reader.read(readRequest).get().getResponseItems().get(0).getValues().get(0);
-          return value;
+          return (T) reader.read(readRequest).get().getResponseItems().get(0).getValues().get(0);
         }
         catch (Exception e) {
           logger.error("reading from plc device {} {} failed", connection, address, e);
