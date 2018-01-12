@@ -18,24 +18,24 @@ under the License.
 */
 package org.apache.plc4x.java.api.messages.items;
 
-import org.apache.plc4x.java.api.model.Address;
+import org.apache.plc4x.java.api.types.ResponseCode;
 
-public class ReadRequestItem<T> extends RequestItem<T, ReadResponseItem<T>> {
+public abstract class ResponseItem<REQUEST_ITEM extends RequestItem> {
 
-    private final int size;
+    private final REQUEST_ITEM requestItem;
 
-    public ReadRequestItem(Class<T> datatype, Address address) {
-        super(datatype, address);
-        this.size = 1;
+    private final ResponseCode responseCode;
+
+    public ResponseItem(REQUEST_ITEM requestItem, ResponseCode responseCode) {
+        this.requestItem = requestItem;
+        this.responseCode = responseCode;
     }
 
-    public ReadRequestItem(Class<T> datatype, Address address, int size) {
-        super(datatype, address);
-        this.size = size;
+    public REQUEST_ITEM getRequestItem() {
+        return requestItem;
     }
 
-    public int getSize() {
-        return size;
+    public ResponseCode getResponseCode() {
+        return responseCode;
     }
-
 }

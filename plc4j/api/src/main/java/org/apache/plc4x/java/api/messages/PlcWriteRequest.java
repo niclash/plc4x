@@ -19,43 +19,77 @@ under the License.
 package org.apache.plc4x.java.api.messages;
 
 import org.apache.plc4x.java.api.messages.items.WriteRequestItem;
+import org.apache.plc4x.java.api.messages.specific.TypeSafePlcWriteRequest;
 import org.apache.plc4x.java.api.model.Address;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
-public class PlcWriteRequest implements PlcRequest {
-
-    private final List<WriteRequestItem> requestItems;
+public class PlcWriteRequest extends PlcRequest<WriteRequestItem<?>> {
 
     public PlcWriteRequest() {
-        this.requestItems = new LinkedList<>();
     }
 
-    public PlcWriteRequest(Class dataType, Address address, Object value) {
-        this();
-        addItem(new WriteRequestItem(dataType, address, value));
+    public <T> PlcWriteRequest(Class<T> dataType, Address address, T... values) {
+        addItem(new WriteRequestItem<>(dataType, address, values));
     }
 
-    public PlcWriteRequest(Class dataType, Address address, Object[] values) {
-        this();
-        addItem(new WriteRequestItem(dataType, address, values));
+    public PlcWriteRequest(List<WriteRequestItem<?>> requestItems) {
+        super(requestItems);
     }
 
-    public PlcWriteRequest(List<WriteRequestItem> requestItems) {
-        this.requestItems = requestItems;
+    public static PlcWriteRequest.Builder builder() {
+        return new Builder();
     }
 
-    public void addItem(WriteRequestItem requestItem) {
-        requestItems.add(requestItem);
-    }
+    public static class Builder extends PlcRequest.Builder<WriteRequestItem<?>> {
 
-    public List<WriteRequestItem> getRequestItems() {
-        return requestItems;
-    }
+        @SuppressWarnings("unchecked")
+        public <T> PlcWriteRequest.Builder addItem(Address address, T value) {
+            Objects.requireNonNull(value);
+            checkType(value.getClass());
+            requests.add(new WriteRequestItem<>((Class<T>) value.getClass(), address, (T) value));
+            return this;
+        }
 
-    public int getNumItems() {
-        return requestItems.size();
-    }
+        public <T> PlcWriteRequest.Builder addItem(Class<T> dataType, Address address, T... values) {
+            checkType(dataType);
+            requests.add(new WriteRequestItem<>(dataType, address, values));
+            return this;
+        }
 
+        public <T> PlcWriteRequest.Builder addItem(WriteRequestItem writeRequestItem) {
+            checkType(writeRequestItem.getDatatype());
+            return this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public PlcWriteRequest build() {
+            if (requests.isEmpty()) {
+                throw new IllegalStateException("No requests added");
+            }
+            PlcWriteRequest plcWriteRequest;
+            if (mixed) {
+                plcWriteRequest = new PlcWriteRequest();
+            } else {
+                plcWriteRequest = new TypeSafePlcWriteRequest<>(firstType);
+            }
+            for (WriteRequestItem request : requests) {
+                plcWriteRequest.addItem(request);
+            }
+            return plcWriteRequest;
+        }
+
+        @SuppressWarnings("unchecked")
+        public <T> TypeSafePlcWriteRequest<T> build(Class<T> type) {
+            if (firstType != type) {
+                throw new ClassCastException("Incompatible type " + type + ". Required " + firstType);
+            }
+            if (mixed) {
+                throw new IllegalStateException("Mixed types contained");
+            }
+            return (TypeSafePlcWriteRequest<T>) build();
+        }
+
+    }
 }

@@ -20,35 +20,20 @@ package org.apache.plc4x.java.api.messages.items;
 
 import org.apache.plc4x.java.api.model.Address;
 
-public class WriteRequestItem {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-    private final Class datatype;
+public class WriteRequestItem<T> extends RequestItem<T, WriteResponseItem<T>> {
 
-    private final Address address;
+    private final List<T> values;
 
-    private final Object[] values;
-
-    public WriteRequestItem(Class datatype, Address address, Object value) {
-        this.datatype = datatype;
-        this.address = address;
-        this.values = new Object[]{value};
+    public WriteRequestItem(Class<T> datatype, Address address, T... values) {
+        super(datatype, address);
+        this.values = new ArrayList<>(Arrays.asList(values));
     }
 
-    public WriteRequestItem(Class datatype, Address address, Object[] values) {
-        this.datatype = datatype;
-        this.address = address;
-        this.values = values;
-    }
-
-    public Class getDatatype() {
-        return datatype;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public Object[] getValues() {
+    public List<T> getValues() {
         return values;
     }
 
