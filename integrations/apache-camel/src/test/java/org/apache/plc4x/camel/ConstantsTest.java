@@ -16,29 +16,25 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 */
-package org.apache.plc4x.java.api.messages.items;
+package org.apache.plc4x.camel;
 
-import org.apache.plc4x.java.api.model.Address;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.lang.reflect.Constructor;
 
-public class WriteRequestItem<T> extends RequestItem<T> {
+public class ConstantsTest {
 
-    private final List<T> values;
-
-    @SafeVarargs
-    public WriteRequestItem(Class<T> dataType, Address address, T... values) {
-        super(dataType, address);
-        List<T> checkedList = Collections.checkedList(new ArrayList<>(), dataType);
-        checkedList.addAll(Arrays.asList(values));
-        this.values = checkedList;
+    @Test
+    public void testConstantsNotInstanceable() throws Exception {
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            try {
+                Constructor<Constants> constructor = Constants.class.getDeclaredConstructor();
+                constructor.setAccessible(true);
+                constructor.newInstance();
+            } catch (Exception e) {
+                throw e.getCause();
+            }
+        });
     }
-
-    public List<T> getValues() {
-        return values;
-    }
-
 }

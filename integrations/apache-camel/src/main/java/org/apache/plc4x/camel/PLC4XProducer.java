@@ -40,15 +40,11 @@ public class PLC4XProducer extends DefaultAsyncProducer {
     private PlcConnection plcConnection;
     private AtomicInteger openRequests;
 
-    public PLC4XProducer(PLC4XEndpoint endpoint) {
+    public PLC4XProducer(PLC4XEndpoint endpoint) throws PlcException {
         super(endpoint);
         this.endpoint = endpoint;
-        try {
-            String plc4xURI = endpoint.getEndpointUri().replaceFirst("plc4x:/?/?", "");
-            plcConnection = endpoint.plcDriverManager.getConnection(plc4xURI);
-        } catch (PlcException e) {
-            throw new RuntimeException(e);
-        }
+        String plc4xURI = endpoint.getEndpointUri().replaceFirst("plc4x:/?/?", "");
+        plcConnection = endpoint.getPlcDriverManager().getConnection(plc4xURI);
         openRequests = new AtomicInteger();
     }
 
@@ -111,7 +107,8 @@ public class PLC4XProducer extends DefaultAsyncProducer {
         }
         try {
             plcConnection.close();
-        } catch (Exception ignore) {
+        } catch (Exception e) {
+            log.warn("Could not close {}", plcConnection, e);
         }
         super.doStop();
     }
