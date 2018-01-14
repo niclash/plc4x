@@ -20,18 +20,30 @@ package org.apache.plc4x.scala.api.messages.items
 
 import org.apache.plc4x.java.api.model.Address
 import org.apache.plc4x.java.api.types.ResponseCode
+
 import scala.collection.immutable.List
 
-case class ReadRequestItem(datatype: Class[_], address: Address, size: Int)
-object ReadRequestItem{
-    def apply(datatype: Class[_], address: Address, size: Int): ReadRequestItem =
+trait RequestItem[D]
+
+case class ReadRequestItem[D](datatype: Class[D],
+                              address: Address,
+                              size: Int) extends RequestItem[D]
+
+object ReadRequestItem {
+    def apply[D](datatype: Class[D], address: Address, size: Int) =
         new ReadRequestItem(datatype, address, size)
-    def apply(datatype: Class[_], address: Address): ReadRequestItem =
+
+    def apply[D](datatype: Class[D], address: Address) =
         new ReadRequestItem(datatype, address, size = 1)
 }
 
-case class ReadResponseItem(readRequestItem: ReadRequestItem, responseCode: ResponseCode, values: List[AnyRef])
-object ReadResponseItem{
-    def apply(readRequestItem: ReadRequestItem, responseCode: ResponseCode, values: List[AnyRef]): ReadResponseItem =
+trait ResponseItem[REQUEST_ITEM <: RequestItem[_]]
+
+case class ReadResponseItem[D](readRequestItem: ReadRequestItem[D],
+                               responseCode: ResponseCode,
+                               values: List[D]) extends ResponseItem[ReadRequestItem[D]]
+
+object ReadResponseItem {
+    def apply[D](readRequestItem: ReadRequestItem[D], responseCode: ResponseCode, values: List[D]) =
         new ReadResponseItem(readRequestItem, responseCode, values)
 }

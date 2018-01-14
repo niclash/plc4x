@@ -36,10 +36,9 @@ trait PlcReader {
       * Reads a requested value from a PLC.
       *
       * @param readRequest object describing the type and location of the value.
-      * @tparam T The value type that should be used.
       * @return a [[Future]] giving async access to the returned value.
       */
-    def read[T](readRequest: PlcReadRequest)(implicit ec: ExecutionContext): Future[PlcReadResponse] =
+    def read(readRequest: PlcReadRequest)(implicit ec: ExecutionContext): Future[PlcReadResponse] =
         reader.read(readRequest.toJava).toScala.map { _.toScala }
 
 }
