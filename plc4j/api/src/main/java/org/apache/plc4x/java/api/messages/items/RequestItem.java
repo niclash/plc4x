@@ -20,22 +20,11 @@ package org.apache.plc4x.java.api.messages.items;
 
 import org.apache.plc4x.java.api.model.Address;
 
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 public abstract class RequestItem<DATA_TYPE> {
 
     private final Class<DATA_TYPE> datatype;
 
     private final Address address;
-
-    private final Lock lock = new ReentrantLock();
-
-    private final Condition responseSet = lock.newCondition();
 
     public RequestItem(Class<DATA_TYPE> datatype, Address address) {
         this.datatype = datatype;
